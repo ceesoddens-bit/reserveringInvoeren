@@ -1,243 +1,324 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webhook Tester</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #007bff;
-            margin-bottom: 10px;
-        }
-        p {
-            text-align: center;
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-        #response {
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 800px;
-            min-height: 150px;
-            overflow: hidden;
-        }
-        pre {
-            background: #f4f4f4;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 14px;
-            border: 1px solid #ddd;
-        }
-        .summary {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .timeline {
-            margin-top: 20px;
-            position: relative;
-            padding-left: 60px;
-            border-left: 4px solid #007bff;
-        }
-        .time-item {
-            margin-bottom: 25px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-        }
-        .time-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .time-dot {
-            position: absolute;
-            left: -22px;
-            left: -37px;
-            top: 10px;
-            width: 16px;
-            height: 16px;
-            background-color: #007bff;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
-        }
-        .time-content {
-            background: #ffffff;
-            padding: 15px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-            transition: box-shadow 0.3s ease;
-        }
-        .time-content:hover {
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .time-content strong {
-            color: #007bff;
-            font-size: 18px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .time-content .date-time {
-            font-size: 15px;
-            color: #555;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .time-item-extra {
-            color: #666;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 5px;
-        }
-        .status-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 15px;
-            color: #555;
-        }
-        .status-info span {
-            background: #e9ecef;
-            padding: 8px 12px;
-            border-radius: 20px;
-        }
-        .refresh-info {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservering – Cees Odd</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a5f3d;
+      --primary-light: #2e8b57;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0f9f4 0%, #e0f2e9 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: var(--card);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .form-container {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26, 95, 61, 0.1);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: '▼';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    select {
+      appearance: none;
+      padding-right: 40px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(26, 95, 61, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(26, 95, 61, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-align: center;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success {
+      background: #d1fae5;
+      color: var(--success);
+      border: 1px solid #a7f3d0;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: var(--error);
+      border: 1px solid #fca5a5;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #64748b;
+      background: #f1f5f9;
+    }
+
+    @media (max-width: 480px) {
+      .container { margin: 20px auto; }
+      .form-container { padding: 20px; }
+      .header { padding: 25px 15px; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Webhook Tester</h1>
-    <p>De inkomende JSON-data wordt automatisch geladen en elke 30 seconden vernieuwd. De gegevens worden weergegeven in een tijdlijn met naam, tijd, aantal gasten, telefoonnummer en aantekeningen.</p>
-    <div id="response">Data wordt geladen...</div>
-    <div class="refresh-info"><i class="fas fa-sync-alt"></i> Vernieuwt automatisch elke 30 seconden</div>
 
-    <script>
-        async function callWebhook() {
-            const responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = '<p style="text-align: center; color: #007bff;"><i class="fas fa-spinner fa-spin"></i> Laden...</p>';
+  <div class="container">
+    <div class="header">
+      <h1>Reservering</h1>
+      <p>Cees Odd – Smaakvolle avonden</p>
+    </div>
 
-            try {
-                const response = await fetch('https://ceesodd.app.n8n.cloud/webhook/0ae6e697-f30d-40c5-ae64-c8f0bf88edb7', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ test: 'Hallo vanuit de website!' })
-                });
+    <div class="form-container">
+      <form id="reserveringForm">
+        <div class="form-group">
+          <label for="datum">Datum</label>
+          <input type="date" id="datum" required />
+        </div>
 
-                const text = await response.text();
-                const status = response.status;
-                let dataType = 'Onbekend';
-                let summary = '';
-                let timelineHTML = '';
+        <div class="form-group">
+          <label for="tijd">Tijd</label>
+          <div class="select-wrapper">
+            <select id="tijd" required>
+              <option value="">Kies een tijd</option>
+              <option value="18:00">18:00</option>
+              <option value="18:30">18:30</option>
+              <option value="19:00">19:00</option>
+              <option value="19:30">19:30</option>
+              <option value="20:00">20:00</option>
+              <option value="20:30">20:30</option>
+              <option value="21:00">21:00</option>
+            </select>
+          </div>
+        </div>
 
-                try {
-                    const json = JSON.parse(text);
-                    dataType = 'JSON';
-                    let bookings = [];
+        <div class="form-group">
+          <label for="naam">Naam</label>
+          <input type="text" id="naam" placeholder="Bijv. Bart Kers" required />
+        </div>
 
-                    if (Array.isArray(json)) bookings = json;
-                    else if (json.items && Array.isArray(json.items)) bookings = json.items;
-                    else if (json.reservations && Array.isArray(json.reservations)) bookings = json.reservations;
+        <div class="form-group">
+          <label for="telefoon">Telefoonnummer</label>
+          <input type="tel" id="telefoon" placeholder="Bijv. 0612345678" required />
+        </div>
 
-                    if (bookings.length > 0) {
-                        bookings.sort((a, b) => {
-                            const timeA = a.Tijd || '99:99';
-                            const timeB = b.Tijd || '99:99';
-                            return timeA.localeCompare(timeB);
-                        });
+        <div class="form-group">
+          <label for="gasten">Aantal gasten</label>
+          <div class="select-wrapper">
+            <select id="gasten" required>
+              <option value="">Kies aantal</option>
+              <option value="1">1 persoon</option>
+              <option value="2">2 personen</option>
+              <option value="3">3 personen</option>
+              <option value="4">4 personen</option>
+              <option value="5">5 personen</option>
+              <option value="6">6 personen</option>
+              <option value="7">7 personen</option>
+              <option value="8">8 personen</option>
+              <option value="9">9 personen</option>
+              <option value="10">10 personen</option>
+            </select>
+          </div>
+        </div>
 
-                        summary = `<div class="summary"><i class="fas fa-calendar-check"></i> ${bookings.length} reservering(en) gevonden</div>`;
-                        timelineHTML = `<div class="timeline">`;
+        <div class="form-group">
+          <label for="aantekeningen">Aantekeningen (optioneel)</label>
+          <textarea id="aantekeningen" placeholder="Bijv. allergieën, kinderstoel, verjaardag..."></textarea>
+        </div>
 
-                        bookings.forEach((b, i) => {
-                            const name = b.Naam || 'Onbekende klant';
-                            const time = b.Tijd || 'Geen tijd opgegeven';
-                            const guests = b.AantalGasten || 'Onbekend';
-                            const phone = b.TelefoonNummer || 'Geen telefoon';
-                            const notes = b.Aantekeningen ? `<div class="time-item-extra"><i class="fas fa-note-sticky"></i> Aantekeningen: ${b.Aantekeningen}</div>` : '';
-                            const phoneExtra = `<div class="time-item-extra"><i class="fas fa-phone"></i> ${phone}</div>`;
-                            const guestsExtra = `<div class="time-item-extra"><i class="fas fa-users"></i> Aantal gasten: ${guests}</div>`;
+        <button type="submit">Reservering bevestigen</button>
+      </form>
 
-                            timelineHTML += `
-                                <div class="time-item" style="transition-delay: ${i * 0.1}s;">
-                                    <div class="time-dot"></div>
-                                    <div class="time-content">
-                                        <strong>${name}</strong>
-                                        <div class="date-time"><i class="far fa-calendar-alt"></i> Vandaag - ${time}</div>
-                                        ${guestsExtra}
-                                        ${phoneExtra}
-                                        ${notes}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        timelineHTML += `</div>`;
-                    } else {
-                        summary = `<div class="summary" style="background:#fff3cd;color:#856404;"><i class="fas fa-info-circle"></i> Geen reserveringen gevonden</div>`;
-                    }
-                } catch (e) {
-                    if (text.includes('<!DOCTYPE') || text.includes('<html')) dataType = 'HTML';
-                    else if (text.includes('<?xml')) dataType = 'XML';
-                    else dataType = 'Plain Text';
-                }
+      <div id="result"></div>
+    </div>
 
-                responseDiv.innerHTML = `
-                    <div class="status-info">
-                        <span><strong>Status:</strong> ${status}</span>
-                        <span><strong>Data-type:</strong> ${dataType}</span>
-                    </div>
-                    ${summary}
-                    ${timelineHTML}
-                `;
+    <div class="footer">
+      © 2025 Cees Odd – Gereserveerd met liefde
+    </div>
+  </div>
 
-                setTimeout(() => {
-                    document.querySelectorAll('.time-item').forEach(item => item.classList.add('visible'));
-                }, 100);
+  <script>
+    const form = document.getElementById('reserveringForm');
+    const resultDiv = document.getElementById('result');
 
-            } catch (error) {
-                responseDiv.innerHTML = `<p style="color: red; text-align: center;"><i class="fas fa-exclamation-triangle"></i> Fout: ${error.message}</p>`;
-            }
+    // Zet minimale datum op vandaag
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('datum').setAttribute('min', today);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultDiv.innerHTML = '';
+
+      const datumInput = document.getElementById('datum').value;
+      const tijd = document.getElementById('tijd').value;
+      const naam = document.getElementById('naam').value.trim();
+      const telefoon = document.getElementById('telefoon').value.trim();
+      const gasten = document.getElementById('gasten').value;
+      const aantekeningen = document.getElementById('aantekeningen').value.trim();
+
+      // ISO-datum in UTC
+      const datumISO = new Date(datumInput + 'T' + tijd + ':00.000Z').toISOString();
+
+      // Bouw URL
+      let params = `Datum=${encodeURIComponent(datumISO)}` +
+                   `&Tijd=${tijd}` +
+                   `&Naam=${encodeURIComponent(naam)}` +
+                   `&Telefoon=${encodeURIComponent(telefoon)}` +
+                   `&Gasten=${gasten}`;
+      if (aantekeningen) {
+        params += `&Aantekeningen=${encodeURIComponent(aantekeningen)}`;
+      }
+
+      const webhookURL = `https://ceesodd.app.n8n.cloud/webhook/worflow%20was%20started?${params}`;
+
+      try {
+        const res = await fetch(webhookURL, { method: 'GET' });
+        const data = await res.json();
+
+        if (res.ok && data.message === "Workflow was started") {
+          const gastenText = gasten == 1 ? 'persoon' : 'personen';
+          resultDiv.innerHTML = `
+            <div class="result success">
+              Reservering bevestigd!<br>
+              <strong>${naam}</strong> – ${gasten} ${gastenText}<br>
+              <small>${datumInput} • ${tijd} ${aantekeningen ? '• Notitie toegevoegd' : ''}</small>
+            </div>`;
+          form.reset();
+        } else {
+          resultDiv.innerHTML = `<div class="result error">Fout bij verzenden. Probeer opnieuw.</div>`;
         }
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="result error">Geen internetverbinding.</div>`;
+      }
+    });
+  </script>
 
-        // 👉 Automatisch laden bij het openen van de pagina
-        window.addEventListener('DOMContentLoaded', callWebhook);
-
-        // 🔁 Vernieuw automatisch elke 30 seconden
-        setInterval(callWebhook, 30000);
-    </script>
 </body>
+NZ
 </html>
